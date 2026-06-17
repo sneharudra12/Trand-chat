@@ -103,8 +103,8 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onSuccess }) => {
                 Log into <span className="text-[#FF3B30]">TrendTalk</span>
               </h2>
               <p className="text-xs text-zinc-500">Join the trending global discussions today.</p>
-              <div className="mt-2.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-[#FF3B30] text-[10.5px] rounded-xl font-bold tracking-tight">
-                🔒 Access Restricted • Login or Signup is Required
+              <div className="mt-2.5 px-3 py-1.5 bg-[#FF3B30]/5 border border-[#FF3B30]/15 text-[#FF3B30] text-[10.5px] rounded-xl font-bold tracking-tight">
+                ✨ Account Required to Post, Comment, Like, or Follow
               </div>
             </div>
 
@@ -199,8 +199,8 @@ export const AuthModals: React.FC<AuthModalsProps> = ({ onSuccess }) => {
                 Create Account ✦
               </h2>
               <p className="text-xs text-zinc-500">Craft your unique talk index and connect.</p>
-              <div className="mt-2.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-[#FF3B30] text-[10.5px] rounded-xl font-bold tracking-tight">
-                🔒 Access Restricted • Login or Signup is Required
+              <div className="mt-2.5 px-3 py-1.5 bg-[#FF3B30]/5 border border-[#FF3B30]/15 text-[#FF3B30] text-[10.5px] rounded-xl font-bold tracking-tight">
+                ✨ Account Required to Post, Comment, Like, or Follow
               </div>
             </div>
 

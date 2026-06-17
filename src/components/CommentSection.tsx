@@ -18,7 +18,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
     reportItem,
     setActiveProfileId,
     setActiveTab,
-    setSelectedPostId
+    setSelectedPostId,
+    setShowAuthModal
   } = useApp();
 
   const [mainComment, setMainComment] = useState('');
@@ -176,9 +177,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
 
         {/* Inline Actions (Like/Reply Button) */}
         <div className="mt-3 flex items-center gap-4 text-[11px] text-zinc-500 pl-1">
-          {currentUser && !isReply && (
+          {!isReply && (
             <button
               onClick={() => {
+                if (!currentUser) {
+                  setShowAuthModal(true);
+                  return;
+                }
                 if (replyToId === comment.id) {
                   setReplyToId(null);
                 } else {
@@ -275,8 +280,22 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
           </div>
         </form>
       ) : (
-        <div className="p-4 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700 flex items-center gap-2 justify-center text-zinc-400 dark:text-zinc-500 text-xs">
-          <Lock className="w-3.5 h-3.5" /> Login to participate in this discussion!
+        <div 
+          onClick={() => setShowAuthModal(true)}
+          className="p-3.5 bg-white/45 dark:bg-zinc-900/40 border border-dashed border-zinc-200 dark:border-zinc-805 rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#FF3B30]/50 transition group"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-450 group-hover:bg-red-50 dark:group-hover:bg-red-500/10 transition">
+              <Lock className="w-4 h-4 text-zinc-400 dark:text-zinc-500 group-hover:text-[#FF3B30] transition duration-200" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Join the discussion</p>
+              <p className="text-[10px] text-zinc-505 dark:text-zinc-450">Log in or create an account to reply or comment.</p>
+            </div>
+          </div>
+          <button className="px-3.5 py-1 bg-zinc-100 dark:bg-zinc-800 text-[10.5px] font-bold text-zinc-650 dark:text-zinc-300 rounded-full transition group-hover:bg-[#FF3B30] group-hover:text-white">
+            Comment ✦
+          </button>
         </div>
       )}
 

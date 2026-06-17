@@ -13,7 +13,8 @@ export const FloatNav: React.FC = () => {
     notifications,
     darkMode,
     setDarkMode,
-    logout
+    logout,
+    setShowAuthModal
   } = useApp();
 
   const unreadCount = notifications.filter(n => n.recipientId === currentUser?.id && !n.isRead).length;
@@ -23,7 +24,7 @@ export const FloatNav: React.FC = () => {
     { id: 'trending', label: 'Trending', icon: TrendingUp },
     { id: 'bookmarks', label: 'Saved', icon: Bookmark },
     { id: 'notifications', label: 'Alerts', icon: Bell, badge: unreadCount },
-    { id: 'profile', label: 'Profile', icon: User, requiresUser: true },
+    { id: 'profile', label: 'Profile', icon: User },
   ];
 
   if (currentUser?.isAdmin) {
@@ -31,6 +32,10 @@ export const FloatNav: React.FC = () => {
   }
 
   const handleTabClick = (tabId: string) => {
+    if (!currentUser && (tabId === 'bookmarks' || tabId === 'notifications' || tabId === 'profile')) {
+      setShowAuthModal(true);
+      return;
+    }
     setActiveTab(tabId);
     setSelectedPostId(null);
     if (tabId === 'profile' && currentUser) {
@@ -51,7 +56,6 @@ export const FloatNav: React.FC = () => {
 
         <div className="flex items-center gap-1 sm:gap-2 flex-1 justify-around">
           {tabs.map((tab) => {
-            if (tab.requiresUser && !currentUser) return null;
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
 

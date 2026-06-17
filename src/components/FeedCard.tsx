@@ -25,7 +25,8 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post, expanded = false }) =>
     setActiveTab,
     setSelectedPostId,
     setSearchQuery,
-    followUser
+    followUser,
+    setShowAuthModal
   } = useApp();
 
   const [isReporting, setIsReporting] = useState(false);
@@ -320,9 +321,12 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post, expanded = false }) =>
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (currentUser) toggleLikePost(post.id);
+              if (currentUser) {
+                toggleLikePost(post.id);
+              } else {
+                setShowAuthModal(true);
+              }
             }}
-            disabled={!currentUser}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 ${
               isLiked 
                 ? 'text-[#FF3B30] bg-red-500/10 scale-105' 
@@ -349,21 +353,23 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post, expanded = false }) =>
           </button>
 
           {/* Bookmark */}
-          {currentUser && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (currentUser) {
                 toggleBookmarkPost(post.id);
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 ${
-                isBookmarked 
-                  ? 'text-yellow-500 bg-yellow-500/10' 
-                  : 'hover:text-yellow-500 hover:bg-yellow-500/5'
-              }`}
-            >
-              <Bookmark className={`w-4.5 h-4.5 ${isBookmarked ? 'fill-current' : ''}`} />
-            </button>
-          )}
+              } else {
+                setShowAuthModal(true);
+              }
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 ${
+              isBookmarked 
+                ? 'text-yellow-500 bg-yellow-500/10' 
+                : 'hover:text-yellow-500 hover:bg-yellow-500/5'
+            }`}
+          >
+            <Bookmark className={`w-4.5 h-4.5 ${isBookmarked ? 'fill-current' : ''}`} />
+          </button>
 
           {/* Share */}
           <button

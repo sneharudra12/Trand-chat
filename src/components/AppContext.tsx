@@ -39,6 +39,8 @@ interface AppContextType {
   unblockUser: (userIdToUnblock: string) => void;
   triggerSystemNotification: (recipientId: string, details: string) => void;
   markNotificationsRead: () => void;
+  showAuthModal: boolean;
+  setShowAuthModal: (val: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -56,6 +58,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
   // Hydrate from localStorage or use Mock Initial Seeds
   useEffect(() => {
@@ -648,6 +651,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       unblockUser,
       triggerSystemNotification,
       markNotificationsRead,
+      showAuthModal,
+      setShowAuthModal,
     }}>
       {children}
     </AppContext.Provider>
