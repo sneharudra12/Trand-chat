@@ -1,0 +1,6 @@
+{
+  "name": "TrendTalk",
+  "description": "A comprehensive modern social media platform utilizing premium glassmorphism design to share thoughts, follow accounts, post stories, and explore trending hashtags.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
