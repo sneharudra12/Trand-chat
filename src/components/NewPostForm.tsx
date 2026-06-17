@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useApp } from './AppContext';
 import { PostCategory } from '../types';
-import { Image, Send, MessageSquare, AlertCircle } from 'lucide-react';
+import { Image, Send, MessageSquare, AlertCircle, Upload, X, Link } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const NewPostForm: React.FC = () => {
@@ -10,7 +10,9 @@ export const NewPostForm: React.FC = () => {
   const [category, setCategory] = useState<PostCategory>('thought');
   const [imageUrl, setImageUrl] = useState('');
   const [showImageInput, setShowImageInput] = useState(false);
+  const [imageSource, setImageSource] = useState<'url' | 'upload'>('url');
   const [success, setSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Cool preset background images to make mockups look stunning instantly
   const presetImages = [
@@ -20,6 +22,17 @@ export const NewPostForm: React.FC = () => {
     'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&auto=format&fit=crop&q=80'  // cosmic blend
   ];
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
@@ -28,6 +41,10 @@ export const NewPostForm: React.FC = () => {
     setContent('');
     setImageUrl('');
     setShowImageInput(false);
+    setImageSource('url');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     setSuccess(true);
     setTimeout(() => setSuccess(false), 2500);
   };
@@ -111,46 +128,117 @@ export const NewPostForm: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="space-y-2 mt-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3 rounded-2xl overflow-hidden"
+              className="space-y-3 mt-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3 rounded-2xl overflow-hidden"
             >
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[10.5px] font-bold text-zinc-400 uppercase tracking-wider">
-                  Attach Visual Background or Image URL
+                <span className="text-[10.5px] font-bold text-zinc-400 uppercase tracking-widest">
+                  Attach Visual Content
                 </span>
                 <button
                   type="button"
                   onClick={() => setShowImageInput(false)}
-                  className="text-xs text-zinc-400 hover:text-zinc-600"
+                  className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 font-medium"
                 >
                   Hide
                 </button>
               </div>
 
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="Insert custom Unsplash or web photo link..."
-                className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-2 text-xs text-zinc-800 dark:text-zinc-100 focus:ring-1 focus:ring-red-400 outline-none"
-              />
-
-              <div className="space-y-1">
-                <div className="text-[10px] text-zinc-400 font-medium">Or quick-click visual themes:</div>
-                <div className="flex gap-2">
-                  {presetImages.map((pImg, pIdx) => (
-                    <button
-                      key={pIdx}
-                      type="button"
-                      onClick={() => setImageUrl(pImg)}
-                      className={`w-12 h-10 rounded-md overflow-hidden border-2 transition ${
-                        imageUrl === pImg ? 'border-[#FF3B30] scale-105' : 'border-transparent hover:opacity-80'
-                      }`}
-                    >
-                      <img src={pImg} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    </button>
-                  ))}
-                </div>
+              {/* Source Tabs Selector selection */}
+              <div className="flex bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg text-[10.5px] font-bold">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageSource('url');
+                    setImageUrl('');
+                  }}
+                  className={`flex-1 py-1 rounded-md transition-all flex items-center justify-center gap-1.5 ${
+                    imageSource === 'url' ? 'bg-white dark:bg-zinc-700 text-[#FF3B30] shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                  }`}
+                >
+                  <Link className="w-3 h-3" /> Web Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageSource('upload');
+                    setImageUrl('');
+                  }}
+                  className={`flex-1 py-1 rounded-md transition-all flex items-center justify-center gap-1.5 ${
+                    imageSource === 'upload' ? 'bg-white dark:bg-zinc-700 text-[#FF3B30] shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                  }`}
+                >
+                  <Upload className="w-3 h-3" /> Photo Gallery
+                </button>
               </div>
+
+              {imageSource === 'url' ? (
+                <>
+                  <input
+                    type="url"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="Insert custom Unsplash or web photo link..."
+                    className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-2 text-xs text-zinc-800 dark:text-zinc-100 focus:ring-1 focus:ring-red-400 outline-none"
+                  />
+
+                  <div className="space-y-1">
+                    <div className="text-[10px] text-zinc-400 font-medium">Or quick-click visual themes:</div>
+                    <div className="flex gap-2">
+                      {presetImages.map((pImg, pIdx) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => setImageUrl(pImg)}
+                          className={`w-12 h-10 rounded-md overflow-hidden border-2 transition ${
+                            imageUrl === pImg ? 'border-[#FF3B30] scale-105' : 'border-transparent hover:opacity-80'
+                          }`}
+                        >
+                          <img src={pImg} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-3">
+                  <input 
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  {!imageUrl ? (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full flex flex-col items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-700 hover:border-[#FF3B30]/50 dark:hover:border-[#FF3B30]/50 rounded-xl py-6 px-4 cursor-pointer bg-white dark:bg-zinc-800/20 transition duration-200 text-center gap-1.5"
+                    >
+                      <Upload className="w-5 h-5 text-zinc-400" />
+                      <span className="text-xs font-extrabold text-zinc-700 dark:text-zinc-300">Choose Post Photo</span>
+                      <span className="text-[10px] text-zinc-400 font-medium font-sans">Open device gallery or drag files here</span>
+                    </button>
+                  ) : (
+                    <div className="relative rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 aspect-video max-h-48 group">
+                      <img src={imageUrl} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImageUrl('');
+                          if (fileInputRef.current) fileInputRef.current.value = '';
+                        }}
+                        className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80 transition shadow-lg"
+                        title="Remove Photo"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <div className="absolute bottom-2 left-2 bg-black/50 backdrop-blur text-white text-[10px] px-2.5 py-0.5 rounded-full font-sans tracking-wide">
+                        Selected Gallery Photo
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

@@ -81,8 +81,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (savedCurrentUser) {
       setCurrentUser(JSON.parse(savedCurrentUser));
     } else {
-      // Default auto-login to u-2 for demonstration if no logged-out preference
-      setCurrentUser(INITIAL_USERS[1]); // clara_tech
+      setCurrentUser(null);
     }
 
     if (savedDarkMode) {

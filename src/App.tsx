@@ -49,6 +49,13 @@ function TrendTalkAppContent() {
   // Auth Overlay toggler
   const [showAuthModal, setShowAuthModal] = useState(!currentUser);
 
+  // Enforce mandatory login
+  useEffect(() => {
+    if (!currentUser) {
+      setShowAuthModal(true);
+    }
+  }, [currentUser]);
+
   // Suggested hashtags
   const SUGGESTED_HASHTAGS = ['design', 'uiux', 'developerlife', 'startup', 'trends', 'joke', 'mentalhealth'];
 
